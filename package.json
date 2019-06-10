@@ -1,15 +1,15 @@
 {
   "name": "prosemirror-pad",
   "version": "0.1.0",
-  "description": "Wireline Pad Template with LogView",
+  "description": "Prosemirror editor pad",
   "keywords": [],
-  "homepage": "https://github.com/wirelineio/logpad-template#readme",
+  "homepage": "https://github.com/wirelineio/prosemirror-pad#readme",
   "bugs": {
-    "url": "https://github.com/wirelineio/logpad-template/issues"
+    "url": "https://github.com/wirelineio/prosemirror-pad/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wirelineio/logpad-template.git"
+    "url": "git+https://github.com/wirelineio/prosemirror-pad.git"
   },
   "license": "GPL-3.0",
   "main": "src/index.js",
