@@ -1,3 +1,2 @@
-# Log Pad
-
-Basic Pad using a simple Log view.
+# prosemirror-pad
+Pad for Launchpad using Prosemirror + Yjs
