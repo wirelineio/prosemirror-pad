@@ -19,7 +19,7 @@ class LogProvider extends Observable {
   /**
    * @param {Y.Doc} doc
    */
-  constructor (itemId, doc, sendUpdate, awareness = new awarenessProtocol.Awareness(doc)) {
+  constructor(itemId, doc, sendUpdate, awareness = new awarenessProtocol.Awareness(doc)) {
 
     super();
 
@@ -39,7 +39,7 @@ class LogProvider extends Observable {
     this.awareness.on('change', this._awarenessUpdateHandler);
 
     if (this.awareness.getLocalState() === null) {
-      this.awareness.setLocalState({});
+      this.awareness.setLocalState({ cursor: {} });
     }
 
     bc.subscribe(this.itemId, this._bcSubscriber);
@@ -59,9 +59,9 @@ class LogProvider extends Observable {
     this.doc.on('update', this._updateHandler);
   }
 
-    /**
-   * @param {ArrayBuffer} data
-   */
+  /**
+ * @param {ArrayBuffer} data
+ */
   receiveUpdate = data => {
     const encoder = readMessage(this, new Uint8Array(Object.values(data)));
     if (encoding.length(encoder) > 1) {
@@ -96,7 +96,7 @@ class LogProvider extends Observable {
       this.sendUpdate(buf);
 
       this.mux(() => {
-        bc.publish(this.url, buf);
+        bc.publish(this.itemId, buf);
       });
     }
   };

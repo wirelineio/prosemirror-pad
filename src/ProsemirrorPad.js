@@ -20,8 +20,8 @@ class ProsemirrorPad extends Component {
   editorContainer = React.createRef();
 
   componentWillReceiveProps(nextProps) {
-    const { itemId, logs = [] } = nextProps;
-    const { itemId: prevItemId, logs: prevLogs = []} = this.props;
+    const { itemId, logs = [], username } = nextProps;
+    const { itemId: prevItemId, logs: prevLogs = [] } = this.props;
 
     if (itemId === undefined) {
       return null;
@@ -30,8 +30,8 @@ class ProsemirrorPad extends Component {
     let logsToApply = [];
 
     if (itemId !== prevItemId) {
-      this.createDocument(itemId);
-      logsToApply = [ ...logs ];
+      this.createDocument(itemId, username);
+      logsToApply = [...logs];
     } else if (logs.length !== prevLogs.length) {
       logsToApply = logs.slice(prevLogs.length);
     }
@@ -50,12 +50,9 @@ class ProsemirrorPad extends Component {
           // Doc update
           this.handleRemoteDocUpdate(update);
         }
-
       }
     });
   }
-
-  // No recibir hasta mandar la confirmación
 
   handleLocalDocUpdate = (update, origin) => {
     const { appendChange } = this.props;
@@ -82,10 +79,12 @@ class ProsemirrorPad extends Component {
     this.logProvider.receiveUpdate(update);
   }
 
-  createDocument = itemId => {
+  createDocument = (itemId, username) => {
     this.destroyDocument();
 
+    // this.ydoc = new Y.Doc({ clientID: username });
     this.ydoc = new Y.Doc();
+    // this.ydoc.clientID = username;
 
     const type = this.ydoc.get('prosemirror', Y.XmlFragment);
 
@@ -108,6 +107,8 @@ class ProsemirrorPad extends Component {
     this.ydoc.on('update', this.handleLocalDocUpdate);
 
     this.logProvider.start();
+
+    window.logProvider = this.logProvider;
   }
 
   destroyDocument = () => {
@@ -118,6 +119,30 @@ class ProsemirrorPad extends Component {
     this.ydoc.off('update', this.handleLocalDocUpdate);
 
     this.ydoc.destroy();
+  }
+
+  componentDidMount() {
+    const { itemId, logs, username } = this.props;
+
+    this.createDocument(itemId, username);
+
+    logs.forEach(log => {
+      const { clientID, update, cursor } = JSON.parse(log);
+
+      // If not a self change.
+      if (clientID !== this.ydoc.clientID) {
+        console.log('IN <<<', { clientID, update, cursor });
+
+        if (cursor) {
+          // Cursor info update;
+          this.handleRemoteCursorUpdate(cursor);
+        } else {
+          // Doc update
+          this.handleRemoteDocUpdate(update);
+        }
+
+      }
+    });
   }
 
   shouldComponentUpdate() {
